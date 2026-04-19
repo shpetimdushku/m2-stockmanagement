@@ -1,7 +1,10 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
+<!-- routes.xml - Register il frontend route per il nostro controller.
+     frontName "stockmanagement" = primo pezzo dell'URL dopo il domain.
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="standard">
-        <route frontName="stockmanagement" id="stockmanagement">
+        <route id="stockmanagement" frontName="stockmanagement">
             <module name="Digitouch_StockManagement"/>
         </route>
     </router>

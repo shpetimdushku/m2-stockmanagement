@@ -1,21 +1,17 @@
 <?xml version="1.0"?>
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
-
     <!-- custom table "incoming_stock" per salvare la incoming quantity per ogni prodotto. engine="innodb" è importante perché InnoDB supporta
-    i transactions e il row-level locking — fondamentale per risolvere la race condition!
-    -->
+        i transactions e il row-level locking — fondamentale per risolvere la race condition!
+        -->
     <table name="incoming_stock" resource="default" engine="innodb" comment="Tabella custom per gestire la incoming_qty di ogni prodotto">
         <!-- id => Pk Autoincrement -->
         <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="Primary key"/>
-
         <!-- entity_id => il product ID [catalog_product_entity.entity_id] -->
-        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false"/>
-
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" comment="ID prodotto"/>
         <!-- incoming_qty. We use decimal not int because the quantity could be in kg (es. 2.5 kg). Default 0 = Nessuna incoming_qty. -->
-        <column xsi:type="decimal" name="incoming_qty" scale="4" precision="12" unsigned="false" nullable="false" default="0"/>
-
-        <!-- Timestamp dell'ultimo update.
+        <column xsi:type="decimal" name="incoming_qty" scale="4" precision="12" nullable="false" default="0" comment="Quantità in arrivo"/>
+           <!-- Timestamp dell'ultimo update.
             ON_UPDATE = true significa che MySQL update -->
         <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Quando è stato fatto l'ultimo update"/>
 
@@ -30,21 +26,28 @@
             usiamo INSERT ... ON DUPLICATE KEY UPDATE incoming_qty = incoming_qty + X
             e lasciamo fare tutto a MySQL atomically [with no pause, single operation].
         -->
-        <constraint xsi:type="unique" referenceId="INCOMING_STOCK_ENTITY_ID_UNIQUE">
+        <constraint xsi:type="unique" referenceId="DIGITOUCH_INCOMING_STOCK_ENTITY_ID_UNQ">
             <column name="entity_id"/>
         </constraint>
+
 
         <!-- Fk in catalog_product_entity.
             Se un prodotto si fa deleted, anche il suo incoming_qty
             si fa deleted automaticamente (ON CASCADE). For cleaner DB...
         -->
-        <constraint xsi:type="foreign" referenceId="INCOMING_STOCK_ENTITY_ID_FK" table="incoming_stock" column="entity_id" referenceTable="catalog_product_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="DIGITOUCH_INCOMING_STOCK_ENTITY_ID_FK"
+                    table="incoming_stock"
+                    column="entity_id"
+                    referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+
 
         <!-- Index su entity_id per le SELECT piu veloce per better performance -->
-        <index referenceId="INCOMING_STOCK_ENTITY_ID_INDEX" indexType="btree">
+        <!-- <index referenceId="INCOMING_STOCK_ENTITY_ID_INDEX" indexType="btree">
             <column name="entity_id"/>
-        </index>
-
+        </index> -->
     </table>
 
 </schema>

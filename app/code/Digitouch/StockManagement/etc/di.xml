@@ -6,7 +6,7 @@
     <!-- Plugin su Magento\CatalogInventory\Block\Stockqty\AbstractStockqty after = viene eseguito
     DOPO il metodo originale, ci serve per check lo stock status -->
     <type name="Magento\Catalog\Block\Product\View">
-        <plugin name="digitouch_incoming_stock_notify_button" type="Digitouch\StockManagement\Plugin\Product\NotifyButton" sortOrder="10"/>
+        <plugin name="digitouch_incoming_stock_notify_button" type="Digitouch\StockManagement\Plugin\Block\Product\View" sortOrder="10"/>
     </type>
 
 </config>

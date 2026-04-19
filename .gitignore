@@ -1,0 +1,48 @@
+# Ignore everything by default
+/*
+
+# Keep git metadata file
+!.gitignore
+!.README.md
+
+# Allow app root
+!/app/
+
+# Allow only the custom module
+!/app/code/
+!/app/code/Digitouch/
+!/app/code/Digitouch/StockManagement/
+!/app/code/Digitouch/StockManagement/**
+
+# Allow only custom themes if needed
+!/app/design/
+!/app/design/adminhtml/
+!/app/design/adminhtml/Magento/
+!/app/design/adminhtml/Magento/**
+
+!/app/design/frontend/
+!/app/design/frontend/Magento/
+!/app/design/frontend/Magento/**
+
+# Allow app/etc, but ignore only config.php
+!/app/etc/
+ /app/etc/*
+!/app/etc/config.php
+/app/etc/env.php
+
+# Ignore everything else explicitly
+/vendor/
+/generated/
+/var/
+/pub/static/
+/pub/media/
+/node_modules/
+
+# IDE / OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.phpunit.result.cache
+*.swp
+*.swo

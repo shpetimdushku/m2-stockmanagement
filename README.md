@@ -32,3 +32,15 @@ I parametri "entity_id" e "incoming_qty" vengono letti direttamente dalla reques
 ### 4. Manca autenticazione o protezione del endpoint
 L'endpoint originale puo essere richiamato senza alcun meccanismo di autenticazione o autorizzazione, esponendo la logica di aggiornamento a modifiche non controllate.
 
+------------------------------------------------------------------------------------------------------------------------------
+
+### Aggiunta unit test
+Sono stati aggiunti unit test per verificare il incoming_qty
+
+In particolare, i test coprono i seguenti scenari:
+- prodotto disponibile: HTML invariato
+- prodotto non disponibile ma con incoming_qty > 0: aggiunta del bottone
+- prodotto non disponibile e senza incoming_qty: HTML invariato
+- prodotto nullo: HTML invariato
+- gestione eccezioni: ritorno dell'HTML originale senza errori lato frontend
+

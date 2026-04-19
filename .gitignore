@@ -3,10 +3,10 @@
 
 # Keep git metadata file
 !.gitignore
-!.README.md
 
 # Allow app root
 !/app/
+!README.md
 
 # Allow only the custom module
 !/app/code/

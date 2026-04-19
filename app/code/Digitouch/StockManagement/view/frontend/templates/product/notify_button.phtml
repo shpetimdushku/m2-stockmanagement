@@ -1,0 +1,26 @@
+<?php
+/** @var \Digitouch\StockManagement\Block\Product\NotifyButton $block */
+?>
+
+<?php if ($block->shouldRender()): ?>
+    <div class="notify-me-wrapper">
+        <form action="<?= $block->escapeUrl($block->getSubmitUrl()) ?>" method="post">
+            <input type="hidden" name="form_key" value="<?= $block->escapeHtmlAttr($block->getFormKey()) ?>">
+            <input type="hidden" name="entity_id" value="<?= (int) $block->getProductId() ?>">
+
+            <div class="field email">
+                <input type="email"
+                       name="email"
+                       class="input-text"
+                       placeholder="<?= $block->escapeHtmlAttr(__('Inserisci la tua email')) ?>"
+                       required>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="action primary notify-me-button">
+                    <span><?= $block->escapeHtml(__('Avvisami quando torna disponibile')) ?></span>
+                </button>
+            </div>
+        </form>
+    </div>
+<?php endif; ?>

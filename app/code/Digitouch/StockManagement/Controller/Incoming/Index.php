@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Digitouch\StockManagement\Controller\Incoming;
 
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -17,7 +18,7 @@ use Digitouch\StockManagement\Helper\IncomingStock;
 // HttpPostActionInterface = accetta solo POST requests, se no ritorna 404.
 // No Action/Context extends - deprecated in Magento 2.4.x.
 
-class Index implements HttpPostActionInterface
+class Index implements HttpGetActionInterface
 {
     public function __construct(
         private readonly RequestInterface $request,

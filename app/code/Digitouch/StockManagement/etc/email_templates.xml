@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+        <!-- Add the email template for subscribe when the user want to be updated when the product is out of stock -->
+    <template id="digitouch_stockmanagement_admin_notification"
+              label="Digitouch Stock Management Admin Notification"
+              file="admin_notification.html"
+              type="html"
+              module="Digitouch_StockManagement"
+              area="frontend"/>
+</config>

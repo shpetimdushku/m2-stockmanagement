@@ -34,6 +34,26 @@ L'endpoint originale puo essere richiamato senza alcun meccanismo di autenticazi
 
 ------------------------------------------------------------------------------------------------------------------------------
 
+## Struttura dei branch
+
+- `main`: versione originale del modulo ricevuto come esercizio
+- `race-condition-bug`: riproduzione del bug di concorrenza ("last write wins")
+- `develop`: versione migliorata con fix della race condition e unit test
+- `develop-api-solution`: versione finale con endpoint migrato a REST API Magento 2
+
+------------------------------------------------------------------------------------------------------------------------------
+
+## Evoluzione finale della soluzione
+
+Nella branch `develop-api-solution` l endpoint custom frontend e stato sostituito con una REST API Magento 2, in modo da avere una soluzione piu corretta per integrazioni tra sistemi esterni.
+
+Questa scelta permette di:
+- evitare l uso di una route frontend per aggiornare dati applicativi
+- utilizzare un approccio piu coerente con Magento 2
+- facilitare autenticazione, manutenzione e integrazione futura
+
+------------------------------------------------------------------------------------------------------------------------------
+
 ### Aggiunta unit test
 Sono stati aggiunti unit test per verificare il incoming_qty
 

@@ -64,3 +64,12 @@ In particolare, i test coprono i seguenti scenari:
 - prodotto nullo: HTML invariato
 - gestione eccezioni: ritorno dell'HTML originale senza errori lato frontend
 
+## Branch `main`
+
+Questa branch rappresenta il punto di partenza del modulo.
+
+### Test rapido endpoint originale
+
+```bash
+curl "http://digitouch.local:8080/stockmanagement/incoming/index?entity_id=1&incoming_qty=5"
+docker exec -it digitouch_db mysql -uroot -proot magento -e "SELECT * FROM incoming_stock WHERE entity_id = 1;"

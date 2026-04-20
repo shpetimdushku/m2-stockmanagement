@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Service contract -> implementazione concreta -->
+    <preference for="Digitouch\StockManagement\Api\IncomingStockManagementInterface"
+                type="Digitouch\StockManagement\Model\IncomingStockManagement"/>
+
+    <!-- Mantieni questo plugin solo se nella tua branch stai ancora usando
+         la versione frontend con Plugin/Block/Product/NotifyButton.php -->
+    <!-- <type name="Magento\Catalog\Block\Product\NotifyButton">
+        <plugin name="digitouch_incoming_stock_notify_button"
+                type="Digitouch\StockManagement\Plugin\Block\Product\NotifyButton"
+                sortOrder="10"/>
+    </type> -->
+
+</config>

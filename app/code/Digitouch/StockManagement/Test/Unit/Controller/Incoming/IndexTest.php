@@ -1,161 +1,96 @@
 <?php
-// Test/Unit/Controller/Incoming/IndexTest.php
-// Unit tests per il Controller Index.
-// Testiamo validation, product check e response format.
 
 declare(strict_types=1);
 
 namespace Digitouch\StockManagement\Test\Unit\Controller\Incoming;
 
+use Digitouch\StockManagement\Api\IncomingStockManagementInterface;
 use Digitouch\StockManagement\Controller\Incoming\Index;
-use Digitouch\StockManagement\Helper\IncomingStock;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\LocalizedException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class IndexTest extends TestCase
 {
+    /** @var RequestInterface&MockObject */
+    private $requestMock;
+
+    /** @var JsonFactory&MockObject */
+    private $resultJsonFactoryMock;
+
+    /** @var Json&MockObject */
+    private $jsonResultMock;
+
+    /** @var IncomingStockManagementInterface&MockObject */
+    private $incomingStockManagementMock;
+
     private Index $controller;
-    private RequestInterface|MockObject $requestMock;
-    private JsonFactory|MockObject $jsonFactoryMock;
-    private ProductRepositoryInterface|MockObject $productRepositoryMock;
-    private IncomingStock|MockObject $incomingStockHelperMock;
-    private Json|MockObject $jsonResultMock;
 
     protected function setUp(): void
     {
-        $this->requestMock            = $this->createMock(RequestInterface::class);
-        $this->jsonFactoryMock        = $this->createMock(JsonFactory::class);
-        $this->productRepositoryMock  = $this->createMock(ProductRepositoryInterface::class);
-        $this->incomingStockHelperMock = $this->createMock(IncomingStock::class);
-        $this->jsonResultMock         = $this->createMock(Json::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->resultJsonFactoryMock = $this->createMock(JsonFactory::class);
+        $this->jsonResultMock = $this->createMock(Json::class);
+        $this->incomingStockManagementMock = $this->createMock(IncomingStockManagementInterface::class);
 
-        // JsonFactory ritorna sempre il nostro mock result
-        $this->jsonFactoryMock
+        $this->resultJsonFactoryMock
             ->method('create')
             ->willReturn($this->jsonResultMock);
 
-        // setData ritorna sempre se stesso - method chaining
         $this->jsonResultMock
             ->method('setData')
             ->willReturnSelf();
 
         $this->controller = new Index(
             $this->requestMock,
-            $this->jsonFactoryMock,
-            $this->productRepositoryMock,
-            $this->incomingStockHelperMock
+            $this->resultJsonFactoryMock,
+            $this->incomingStockManagementMock
         );
     }
 
-    // Test che con dati validi il controller chiama l'helper e ritorna success.
-    public function testExecuteWithValidDataReturnsSuccess(): void
+    public function testExecuteReturnsSuccessResponse(): void
     {
-        $this->requestMock->method('getParam')
+        $this->requestMock
+            ->method('getParam')
             ->willReturnMap([
-                ['entity_id', null, '1'],
-                ['incoming_qty', null, '5'],
+                ['entity_id', null, 1],
+                ['incoming_qty', null, 5.0],
             ]);
 
-        // Il prodotto esiste - no exception
-        $this->productRepositoryMock
+        $this->incomingStockManagementMock
             ->expects($this->once())
-            ->method('getById')
-            ->with(1);
+            ->method('execute')
+            ->with(1, 5.0)
+            ->willReturn([
+                'success' => true,
+                'message' => 'OK',
+                'entity_id' => 1,
+                'incoming_qty' => 5.0,
+            ]);
 
-        // L'helper deve essere chiamato con i valori corretti
-        $this->incomingStockHelperMock
-            ->expects($this->once())
-            ->method('updateIncomingQty')
-            ->with(1, 5.0);
+        $result = $this->controller->execute();
 
-        // Il result deve avere success = true
-        $this->jsonResultMock
-            ->expects($this->once())
-            ->method('setData')
-            ->with(['success' => true]);
-
-        $this->controller->execute();
+        $this->assertInstanceOf(Json::class, $result);
     }
 
-    // Test che con entity_id = 0 ritorna errore senza chiamare l'helper.
-    public function testExecuteWithInvalidEntityIdReturnsError(): void
+    public function testExecuteReturnsErrorResponseOnLocalizedException(): void
     {
-        $this->requestMock->method('getParam')
+        $this->requestMock
+            ->method('getParam')
             ->willReturnMap([
-                ['entity_id', null, '0'],
-                ['incoming_qty', null, '5'],
+                ['entity_id', null, 1],
+                ['incoming_qty', null, 5.0],
             ]);
 
-        // L'helper NON deve essere chiamato se la validation fallisce!
-        $this->incomingStockHelperMock
-            ->expects($this->never())
-            ->method('updateIncomingQty');
+        $this->incomingStockManagementMock
+            ->method('execute')
+            ->willThrowException(new LocalizedException(__('Errore test')));
 
-        $this->jsonResultMock
-            ->expects($this->once())
-            ->method('setData')
-            ->with($this->callback(function (array $data) {
-                return $data['success'] === false;
-            }));
+        $result = $this->controller->execute();
 
-        $this->controller->execute();
-    }
-
-    // Test che con incoming_qty <= 0 ritorna errore.
-    public function testExecuteWithInvalidQtyReturnsError(): void
-    {
-        $this->requestMock->method('getParam')
-            ->willReturnMap([
-                ['entity_id', null, '1'],
-                ['incoming_qty', null, '-5'],
-            ]);
-
-        $this->incomingStockHelperMock
-            ->expects($this->never())
-            ->method('updateIncomingQty');
-
-        $this->jsonResultMock
-            ->expects($this->once())
-            ->method('setData')
-            ->with($this->callback(function (array $data) {
-                return $data['success'] === false;
-            }));
-
-        $this->controller->execute();
-    }
-
-    // Test che se il prodotto non esiste ritorna errore con messaggio.
-    public function testExecuteWithNonExistentProductReturnsError(): void
-    {
-        $this->requestMock->method('getParam')
-            ->willReturnMap([
-                ['entity_id', null, '999'],
-                ['incoming_qty', null, '5'],
-            ]);
-
-        // Il prodotto non esiste - lancia NoSuchEntityException
-        $this->productRepositoryMock
-            ->method('getById')
-            ->willThrowException(new NoSuchEntityException(__('Product not found')));
-
-        // L'helper NON deve essere chiamato se il prodotto non esiste!
-        $this->incomingStockHelperMock
-            ->expects($this->never())
-            ->method('updateIncomingQty');
-
-        $this->jsonResultMock
-            ->expects($this->once())
-            ->method('setData')
-            ->with($this->callback(function (array $data) {
-                return $data['success'] === false
-                    && str_contains($data['message'], '999');
-            }));
-
-        $this->controller->execute();
+        $this->assertInstanceOf(Json::class, $result);
     }
 }

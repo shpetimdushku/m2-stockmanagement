@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Digitouch_StockManagement::root"
+                          title="Digitouch Stock Management"
+                          sortOrder="999">
+                    <resource id="Digitouch_StockManagement::incoming_stock_update"
+                              title="Update Incoming Stock"
+                              sortOrder="10"/>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

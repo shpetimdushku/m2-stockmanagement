@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+
+    <!-- Endpoint REST finale consigliato per integrazione con sistemi esterni -->
+    <route url="/V1/stockmanagement/incoming" method="POST">
+        <service class="Digitouch\StockManagement\Api\IncomingStockManagementInterface" method="execute"/>
+        <resources>
+            <resource ref="Digitouch_StockManagement::incoming_stock_update"/>
+        </resources>
+    </route>
+
+</routes>
